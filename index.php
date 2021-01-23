@@ -1,0 +1,816 @@
+
+<?php
+include 'includes/dbh.inc.php';
+// Initialize the session
+session_start();
+ 
+// Check if the user is already logged in, if yes then redirect him to welcome page
+if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
+  
+  header("location: schedule.php");
+  exit;
+}
+ 
+// Include config file
+require_once "includes/dbh.inc.php";
+ 
+// Define variables and initialize with empty values
+$username = $password = "";
+$username_err = $password_err = "";
+ 
+// Processing form data when form is submitted
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+ 
+  if(isset($_POST['username'])){
+      // Check if username is empty
+      if(empty(trim($_POST["username"]))){
+        $username_err = "Please enter username.";
+      } else{
+        $username = trim($_POST["username"]);
+      }
+  }
+    
+  if(isset($_POST['username'])){
+      // Check if password is empty
+      if(empty(trim($_POST["docpsw"]))){
+        $password_err = "Please enter your password.";
+      } else{
+        $password = trim($_POST["docpsw"]);
+      }
+  }
+   
+    $link = mysqli_connect("localhost", "root", "", "covid19");
+    // Validate credentials
+    if(empty($username_err) && empty($password_err)){
+        // Prepare a select statement
+        $sql = "SELECT doc_id, doc_name, doc_password FROM doctable WHERE doc_name = ?";
+      
+
+        if($stmt = mysqli_prepare($link, $sql)){
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            
+            // Set parameters
+            $param_username = $username;
+            
+            // Attempt to execute the prepared statement
+            if(mysqli_stmt_execute($stmt)){
+                // Store result
+                mysqli_stmt_store_result($stmt);
+                
+                // Check if username exists, if yes then verify password
+                if(mysqli_stmt_num_rows($stmt) == 1){                    
+                    // Bind result variables
+                    mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password);
+                    if(mysqli_stmt_fetch($stmt)){
+                        if(password_verify($password, $hashed_password)){
+                            // Password is correct, so start a new session
+                            session_start();
+                            
+                            // Store data in session variables
+                            $_SESSION["loggedin"] = true;
+                            $_SESSION["id"] = $id;
+                            $_SESSION["username"] = $username;                            
+                            
+                            // Redirect user to welcome page
+                            header("location: schedule.php");
+                        } else{
+                            // Display an error message if password is not valid
+                            $password_err = "The password you entered was not valid.";
+                        }
+                    }
+                } else{
+                    // Display an error message if username doesn't exist
+                    $username_err = "No account found with that username.";
+                }
+            } else{
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+
+            // Close statement
+            mysqli_stmt_close($stmt);
+        }
+    }
+    
+    // Close connection
+    mysqli_close($link);
+}
+?>
+ 
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Covid-19</title>
+  <link rel="stylesheet" href="css/style.css">
+   
+   <!-- Load an icon library to show a hamburger menu (bars) on small screens -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+ <style>
+   
+/* Full-width input fields */
+ input[type=text ],input[type=password],textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* Add a background color when the inputs get focus */
+ input[type=text]:focus, input[type=password]:focus textarea:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #F85F14D9;
+  color: white;
+  padding: 14px 20px;
+  margin: 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+ 
+button:hover {
+  opacity:1;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+  padding: 14px 20px;
+  background-color: #f44336;
+}
+
+/* Float cancel and signup buttons and add an equal width */
+.cancelbtn, .signupbtn {
+  float: left;
+  width: 50%;
+}
+
+/* Add padding to container elements */
+.container {
+  padding: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: hidden; /* Enable scroll if needed */
+  background-color: #474e5d transparent;
+  padding-top: 50px;
+  opacity: .9;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #060606ad;
+  margin: 2% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 65%; /* Could be more or less, depending on screen size */
+  color: #fff5a0;
+}
+
+/* Style the horizontal ruler */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+ 
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 35px;
+  top: 15px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #f1f1f1;
+}
+
+.close:hover,
+.close:focus {
+  color: #f44336;
+  cursor: pointer;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Change styles for cancel button and signup button on extra small screens */
+@media screen and (max-width: 300px) {
+  .cancelbtn, .signupbtn {
+     width: 100%;
+  }
+}
+</style>
+ 
+   
+</head>
+
+<body>
+ 
+ 
+  <div class="topnav" id="myTopnav">
+    <a href="index.php" class="active">Home</a>
+    
+    <a href="infected.php">Infected </a>
+    <a href="doctors.php">Doctors</a>
+
+ <!-- sign up-->
+
+    
+<button onclick="document.getElementById('id01').style.display='block'" style="width:auto;">Sign Up</button>
+ 
+<div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+  <form class="modal-content" action=" " method="POST">
+    <div class="container">
+      <h1>Sign Up</h1>
+      <p>Please fill in this form to create an account.</p>
+      <hr>
+      <label for="email"><b>Name</b></label>
+      <input type="text" placeholder="Enter Your Name" name="docname" required>
+
+      <label for="email"><b>Email</b></label><br>
+      <input type="text" placeholder="Enter Email" name="docemail" required>
+
+      <label for=" "><b> Medical Licence no.</b></label>
+      <input type="password" placeholder="Enter Your Medical license no. " name="docpsw" required>
+
+      <label for=" "><b>Chamber</b></label>
+      <input type="text" placeholder="Hospital Name" name="h_name" required>
+      
+      <label for=" "><b>Location</b></label>
+      <input type="text" placeholder="Hospital Location" name="h_loca" required>
+      
+      <label for="appt-time">Choose an appointment time (opening hours 12:00 to 18:00): </label>
+        <input id="appt-time" type="time" name="appt-time1"
+              min="12:00" max="18:00"> to
+        <input id="appt-time" type="time" name="appt-time2"
+        min="12:00" max="18:00">
+        <span class="validity"></span>
+
+      <label>
+        <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+      </label>
+
+    
+
+      <div class="clearfix">
+        
+      <!--<button type="button" name="signup" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Submit</button>
+         -->
+      
+        <button name="signup">Sign Up</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+<!-- sign up end-->
+
+
+<!-- sign in start-->
+
+<button onclick="document.getElementById('id02').style.display='block'" style="width:auto;">Sign In</button>
+
+<div id="id02" class="modal">
+  <span onclick="document.getElementById('id02').style.display='none'" class="close" title="Close Modal">&times;</span>
+  <form class="modal-content" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+    <div class="container">
+      <h1>Sign In</h1>
+      <p>Please fill in this form to Log in.</p>
+      <hr>
+      <div class="form-group <?php echo (!empty($username_err)) ? 'has-error' : ''; ?>">
+      <label for="email"><b>Username</b></label>
+      <input type="text" placeholder="Enter Your Name" name="username" value="<?php echo $username; ?>" required>
+      <span class="help-block"><?php echo $username_err; ?></span>
+      </div>
+      <div class="form-group <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+      <label for="psw"><b>Medical Licence no.</b></label>
+      <input type="password" placeholder="Enter Your Medical license no. " name="docpsw" required>
+      <span class="help-block"><?php echo $password_err; ?></span>
+      </div>
+      
+      <label>
+        <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+      </label>
+
+    
+
+      <div class="clearfix">
+      <!--
+             <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Submit</button>
+      
+      --> 
+      <a href="schedule.php"></a>
+        <button name="signin">Sign In</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+ 
+
+
+<script>
+
+// Get the modal
+var modal = document.getElementById('id02');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+<!-- sign in end-->
+
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+      <i class="fa fa-bars"></i>
+    </a>
+  </div>
+
+  <div class="main_header">
+    <div class="corona">
+      <p style="text-align: center; position:absolute; top:18rem; font-size:4rem; color: #fffb9f; font-style: italic;">
+        Stay hygiene, Stay Safe.
+      </p>
+      <img class="" src="img/c.jpg" alt="corona">
+
+
+    </div>
+
+    <!-- counter start-->
+
+    <div class="counter_header">
+      <h3>Covid Cases in Bangladesh</h3>
+    </div>
+
+    <section class="counting">
+      <div class="layout">
+        <div class="grid-3">
+          <span class="count1 counter">514K+</span>
+          <p>Total cases</p>
+        </div> <!-- /.col-sm-3 -->
+        <div class="grid-3">
+          <span class="count2 counter">457K+</span>
+          <p>Recovered</p>
+        </div><!-- /.col-sm-3 -->
+        <div class="grid-3">
+          <span class="counter ">7,559+</span>
+          <p>Deaths</p>
+        </div><!-- /.col-sm-3 -->
+        <div class="grid-3">
+          <span class="counter count4">1.32%</span>
+          <p>Infection Fatality Ratio</p>
+        </div><!-- /.col-sm-3 -->
+
+      </div>
+    </section>
+    <!-- counter end-->
+  </div>
+
+  <br><br>
+  <hr>
+  <br><br>
+
+  <div class="container">
+  <div class="details">
+    <div class="pic">
+          <img src="img/corona.jpg" alt="">
+    </div>
+
+    <div class= " writing">
+      <h6 style="font-size: 17px; margin-top:10px;">
+      <strong style="font-size:18px; font-style: italic; margin-bottom:7px;">Self care</strong>
+       <br><hr>
+        If you feel sick you should rest, drink plenty of fluid, and eat nutritious food. Stay in a separate room from other family members, and use a dedicated bathroom if possible. Clean and disinfect frequently touched surfaces.
+        Everyone should keep a healthy lifestyle at home. Maintain a healthy diet, sleep, stay active, and make social contact with loved ones through the phone or internet. Children need extra love and attention from adults during difficult times. Keep to regular routines and schedules as much as possible.
+        It is normal to feel sad, stressed, or confused during a crisis. 
+      </h6>
+    
+    </div>
+
+  </div>  
+
+  </div>
+  
+  <br><br>
+    
+  <br><br>
+
+  <div class="counter_header">
+      <h3>Covid Symptoms</h3>
+    </div>
+  <!-- info start--->
+
+  <div class="info_part">
+
+  <div class="info">
+
+<div class="info_head">
+      <h4>Coughing</h4>
+</div>
+
+<div class="info_details">
+        <p>The virus can lead to pneumonia, respiratory failure, heart problems, liver problems.Many COVID-19 complications may be caused by a condition known as cytokine release syndrome or a cytokine storm.</p>
+</div>
+ 
+</div>
+
+
+<div class="info">
+
+<div class="info_head">
+      <h4>Fever </h4>
+</div>
+
+<div class="info_details">
+        <p> Doctors consider a temperature of 100.4°F or higher to be a fever.
+
+A person with a fever will feel hot to touch on their back or chest. Even if you have mild symptoms like a headache and runny nose, stay in until you’re better. This lets doctors focus on people who are more seriously ill and protects health care workers and people you might meet along the way</p>
+</div>
+ 
+</div>
+
+<div class="info">
+
+<div class="info_head">
+      <h4>Tiredness</h4>
+</div>
+
+<div class="info_details">
+<p>Fatigue is a feeling of tiredness and an overall lack of energy. A person with fatigue may feel drained, weak, or sluggish.</p> 
+</div>
+ 
+</div>
+
+<div class="info">
+
+<div class="info_head">
+      <h4>Shortness of breath
+</h4>
+</div>
+
+<div class="info_details">
+<p>Shortness of breath is a subjective feeling. However, those experiencing shortness of breath may describe it feeling as if they are suffocating, or unable to catch their breath.</p>   
+</div>
+ 
+</div>
+
+<div class="info">
+
+<div class="info_head">
+      <h4>Prevention</h4>
+</div>
+
+<div class="info_details">
+  <p>
+  To prevent the spread of COVID-19:
+  
+
+  </p>
+  <div style=" text-align: right;">
+  <ul>Maintain a safe distance from anyone who is coughing or sneezing.</ul>
+  <ul>Wear a mask when physical distancing is not possible.</ul>
+  <ul>Don’t touch your eyes, nose or mouth.</ul> 
+  <ul>Stay home if you feel unwell.</ul>
+  </div>
+  
+</div>
+ 
+</div>
+  </div>
+
+<!-- info end--->
+
+
+<div class="counter_header">
+      <h3>Your information will help others to prevent the virus</h3>
+    </div>
+
+
+
+<!-- your case start--->
+<div class="contact_form">
+
+ <form action="" method="post">
+ 
+
+
+ <div class="form-section">
+ 
+ <label for="">Name</label>
+ <input style="width: 70%;" id="pname" type="text" name="pname" placeholder="Your name">
+ 
+ </div>
+
+
+ <div class="form-section">
+ 
+ <label for="">Email</label>
+ <input style="width: 70%;" type="email" name="pemail" placeholder="Your Email">
+ 
+ </div>
+
+ 
+ <div class="form-section">
+ 
+ <label for="">Phone</label>
+ <input style="width: 70%;" type="text" name="pphone" placeholder="Contact Number">
+ 
+ </div>
+ 
+ <div class = "form-checkbox">
+ <div class="cb">
+   <input type="checkbox" id="" name="covidsymp[]" value="Cold">
+  <label for=""> Cold</label><br>
+   </div>
+   <div class="cb">
+   <input type="checkbox" id="" name="covidsymp[]" value="Fever">
+  <label for=""> Fever</label><br>
+   </div>
+   <div class="cb">
+   <input type="checkbox" id="" name="covidsymp[]" value="Difficult to Breath">
+  <label for=""> Difficult to Breath</label><br>
+   </div>
+   <div class="cb">
+   <input type="checkbox" id="" name="covidsymp[]" value="Feeling weak">
+  <label for=""> Feeling weak</label><br>
+   </div>
+   <div class="cb">
+   <input type="checkbox" id="" name="covidsymp[]" value="Headache">
+  <label for=""> Headache </label><br>
+   </div>
+ 
+ </div>
+ <div class="form-section">
+ 
+ <label for="">Other issues</label>
+ <textarea name="issue" style=" position: absolute; right: 2rem; width: 70%" name="" id="" cols="30" rows="5">
+
+ 
+ </textarea>
+ 
+ </div>
+
+ <div class="dropdown-section">
+ 
+ <label style="margin-right:8rem; color: bisque;" for="">Living Area </label>
+ 
+ <?php 
+ // area sql
+  $areasql = "SELECT * FROM area ";
+
+   
+$result = $conn->query($areasql);
+
+if ($result->num_rows> 0) {
+// output data of each row
+?>
+<select name="area">
+  <?php
+  while($row = $result->fetch_assoc()) {
+   
+    ?>
+ 
+      <option name="area" value="<?php echo $row['area_id'] ?>"><?php echo $row['area_name'] ?></option>
+     
+<?php
+  }
+  ?>
+  </select>
+  <?php
+} else {
+
+  ?>
+  <tr>
+    <td colspan="5" style="text-align:center;">NO DATATABLE</td>
+    
+</tr>
+
+  <?php
+  
+}
+
+?>
+
+ 
+  
+ </div>
+
+ <div class="submit_button">
+    <button name="submit">Submit</button>
+ </div>
+ </form>
+ </div>
+ 
+   
+
+ <!-- your case end--->
+
+
+ <!-- footer -->
+
+ <footer>
+  <p>&copy; Musaddik Habib || Atiya Afra Anam || Abrar Zaheen<br>
+  <a href="https://corona.gov.bd/" style="font-size: 12px; color:#fffb9f;">Click Here to Visit Latest Covid-19 News In Bangladesh. </a></p>
+</footer>
+
+
+ <!-- footer -->
+
+<script src="js/custom.js"></script>
+  <script src="js/jquery.countup.js"></script>
+
+</body>
+
+</html>
+
+
+<?php 
+
+// issues 
+
+ include 'includes/dbh.inc.php';
+
+if(isset($_POST['submit'])){
+  $pat_name = $_POST['pname'];
+  $email = $_POST['pemail'];
+  $phone = $_POST['pphone'];
+
+  $symp="";
+  if(isset($_POST['covidsymp'])){
+  $symp = $_POST['covidsymp'];
+  }
+  $issues = $_POST['issue'];
+  
+  $chk = "";
+  if (is_array($symp) || is_object($symp)){
+  foreach ($symp as $chk1){
+    $chk .= $chk1.",";
+
+  }
+  
+}
+
+$area1="";
+if(isset($_POST['area'])){
+
+  $area1 = $_POST['area'];
+ 
+}
+// selecting specific value from db
+$pat_living_area="";
+$pat_living_area = "SELECT area_name from area where(area_id = '$area1')";
+
+
+$result11 = mysqli_query($conn,$pat_living_area);
+if(mysqli_num_rows($result11)>0){
+  while($row = mysqli_fetch_assoc($result11)){
+    $p_area = $row['area_name'];
+  }
+}
+
+$sql = "INSERT INTO issues(p_name, p_email, p_phone, symptoms, other_issues,living_area,area_id) VALUES ('$pat_name','$email','$phone','$chk','$issues','$p_area','$area1')";
+
+if (mysqli_query($conn, $sql)) {
+?>
+  <script>
+  alert(" Successfully inserted data.");
+</script>
+<?php 
+} else {
+  ?>
+  <script>
+     alert(" Data couldn't  inserted .");
+  </script>
+<?php
+}
+}
+
+?>
+
+
+<?php 
+
+
+// sign up
+
+
+if(isset($_POST['signup'])){
+  
+
+  $doc_name="";
+  if(isset($_POST['docname'])){
+
+    $doc_name = $_POST['docname'];
+   
+  }
+  
+
+  $doc_email="";
+  if(isset($_POST['docemail'])){
+
+    $doc_email = $_POST['docemail'];
+   
+  }
+  
+  $cham="";
+  if(isset($_POST['h_name'])){
+
+    $cham = $_POST['h_name'];
+   
+  }
+
+  $h_location="";
+  if(isset($_POST['h_loca'])){
+
+    $h_location = $_POST['h_loca'];
+   
+  }
+
+  $apt_time1="";
+  if(isset($_POST['appt-time1'])){
+
+    $apt_time1 = $_POST['appt-time1'];
+   
+  }
+
+  $apt_time2="";
+  if(isset($_POST['appt-time2'])){
+
+    $apt_time2 = $_POST['appt-time2'];
+   
+  }
+
+  $apt_time3 = $apt_time1 . ' To ' . $apt_time2;
+  echo $apt_time3;
+
+  $doc_pass="";
+  if(isset($_POST['docpsw'])){
+  
+    $doc_pass = PASSWORD_HASH($_POST["docpsw"], PASSWORD_DEFAULT);
+   
+  }
+  
+
+$sql = "INSERT INTO doctable(doc_name, doc_email, doc_password, chamber_name, hospital_location,available) VALUES ('$doc_name','$doc_email','$doc_pass','$cham','$h_location','$apt_time3')";
+
+
+
+if(mysqli_query($conn, $sql)){
+  ?>
+    <script>
+    alert(" Successfully Signed Up.");
+  </script>
+
+  
+  <?php 
+
+} else {
+  ?>
+  <script>
+     alert(" Invalid Sign up");
+  </script>
+<?php
+}
+}
+?>
+
+
+ 

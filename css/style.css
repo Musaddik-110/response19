@@ -1,0 +1,607 @@
+ /* col size defining*/
+
+ @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&display=swap');
+ 
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1em;
+}
+
+.container {
+  width: 80%;
+}
+
+.row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5px;
+
+}
+
+/* content */
+.row div {
+  background-color: #EF5350;
+  padding: 3%;
+  border: 1px solid white;
+  border-radius: 5px;
+  text-align: right;
+  color: white;
+  transition: background-color 1s;
+}
+
+.row div:nth-child(2n):hover {
+  background-color: #42A5F5;
+}
+
+.row div:nth-child(2n+1):hover {
+  background-color: #66BB6A;
+}
+
+/* 1/12 */
+.col-1 {
+  width: 8.33%;
+}
+
+/* 2/12 */
+.col-2 {
+  width: 16.66%;
+}
+
+/* 3/12 */
+.col-3 {
+  width: 25%;
+}
+
+/* 4/12 */
+.col-4 {
+  width: 33.33%
+}
+
+/* 5/12 */
+.col-5 {
+  width: 41.66%;
+}
+
+/* 6/12 */
+.col-6 {
+  width: 50%;
+}
+
+/* 7/12 */
+.col-7 {
+  width: 58.33%;
+}
+
+/* 8/12 */
+.col-8 {
+  width: 66.66%;
+}
+
+/* 9/12 */
+.col-9 {
+  width: 75%;
+}
+
+/* 10/12 */
+.col-10 {
+  width: 83.33%;
+}
+
+/* 11/12 */
+.col-11 {
+  width: 91.66%;
+}
+
+/* 12/12 */
+.col-12 {
+  width: 100%;
+}
+
+/* viewport <= 1000px */
+@media screen and (max-width: 1000px) {
+  * {
+    font-size: 1em;
+  }
+}
+
+/* viewport <= 630px */
+@media screen and (max-width: 630px) {
+  .row div {
+    padding: 1.5%;  
+  }    
+} 
+
+/* viewport <= 500px */
+@media screen and (max-width: 500px) {
+  * {
+    font-size: 0.9em;
+  }
+}
+
+
+/* col size defining end */
+
+
+
+
+
+
+
+/* Add a black background color to the top navigation */
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav button,
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+  transition: all .4s;
+  -webkit-transition: all .4s;
+  -moz-transition: all .4s;
+  -ms-transition: all .4s;
+  -o-transition: all .4s;
+  margin-left: .5rem;
+}
+ 
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+  transition: all .4s;
+  -webkit-transition: all .4s;
+  -moz-transition: all .4s;
+  -ms-transition: all .4s;
+  -o-transition: all .4s;
+   
+}
+
+/* Add an active class to highlight the current page */
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* Hide the link that should open and close the topnav on small screens */
+.topnav .icon {
+  display: none;
+}
+
+/* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
+@media screen and (max-width: 600px) {
+  .topnav a:not(:first-child) {display: none;}
+  .topnav a.icon {
+    float: right;
+    display: block;
+  }
+}
+
+/* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+@media screen and (max-width: 600px) {
+  .topnav.responsive {position: relative;}
+  .topnav.responsive a.icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .topnav.responsive a {
+    float: none;
+    display: block;
+    text-align: left;
+  }
+}
+
+.corona{
+  
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+
+}
+.corona p{
+  position: absolute;
+  top: 5rem;
+  font-size: 2rem;
+  left: 2rem;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 400;
+
+}
+.corona img{
+  width: 100%;
+  height: 80vh;
+}
+
+
+/* counter */
+ 
+
+.layout {
+	margin: 0 auto;
+	max-width: 1170px;
+	width: 100%;
+	padding: 0 15px;
+}
+/********Grid Widht *******/
+.grid-3 {	width: 25%;	float: left;	min-height: 1px;	padding-left: 15px;	padding-right: 15px;
+	position: relative;}
+/********Grid Widht *******/	
+
+
+
+
+/***Section Css******/
+.counting {
+    background: #34495e none repeat scroll 0 0;
+    color: #fff;
+    overflow: hidden;
+    padding: 36px 0;
+}
+
+.counting span {
+    font-size: 70px;
+    font-weight: 700;
+    position: relative;
+	text-align:center;
+	display:block;
+}
+.counting p {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding-top: 30px;
+    text-transform: uppercase;
+	text-align:center;
+}
+
+.counting span::before {
+    background: #b7b7b7 none repeat scroll 0 0;
+    bottom: -10px;
+    content: " ";
+    height: 4px;
+    left: 32%;
+    position: absolute;
+    width: 36%;
+}
+
+
+@media (max-width:980px) {
+	.layout {				width: 767px;	}
+	.grid-3 {				width: 50%;	}
+}
+@media (max-width:640px) {
+	.layout {		width: 300px;	}
+	.grid-3 {		width: 100%;	}
+
+
+	}
+
+.details{
+  height: 40vh;
+  margin: 0 auto;
+  position: relative;
+}
+
+.writing{
+  position:absolute;
+  right: 0;
+  width: 25rem;
+}
+
+.writing h6{
+ 
+  font-weight: 400;
+  font-size: 18px;
+  font-family: 'Oswald', sans-serif;
+
+}
+
+.pic img{
+  position:absolute;
+  left: 5rem;
+  width: 33rem;
+}
+
+.info{
+  position: relative;
+  background: rgb(183,16,16);
+  background: linear-gradient(156deg, rgba(183,16,16,1) 0%, rgba(121,9,62,1) 31%, rgba(0,215,255,1) 100%);
+  width:80%;
+  height: 10rem;
+  margin: 0 auto;
+  margin-bottom: 2rem;
+  color: wheat;
+}
+
+.info:last-child{
+  background: rgb(30,24,124);
+  background: linear-gradient(80deg, rgba(30,24,124,1) 0%, rgba(9,83,121,1) 31%, rgba(0,255,102,1) 100%);
+  color: aliceblue; 
+} 
+.info .info_details:last-child{
+  width: 98%;
+} 
+.info_head{
+  position:absolute;
+  padding: 1rem 2rem;
+  font-weight:700;
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+
+}
+ 
+.info .info_details{
+  position: absolute;
+  width: 100%;
+  top: 3rem;
+
+}
+.info_details p{
+  position: absolute;
+  padding: 1rem 5rem;
+  font-size: 16px;
+  font-weight:400;
+  font-family: 'Oswald', sans-serif;
+
+}
+
+
+/*  contact form */
+.appointment_form,
+.contact_form{
+  margin: 0 auto;
+  font-size: 22px;
+  width: 60%;
+  height: 90vh;
+  background: linear-gradient(144deg, rgba(62,156,72,1) 5%, rgba(77,88,179,1) 38%, rgba(88,88,164,1) 69%, rgba(33,184,214,1) 97%); 
+  position: relative;
+  margin-bottom: 3rem;
+  border: 1px solid;
+  padding: 10px;
+  box-shadow: 5px 10px 18px #888888;
+  margin-top: 4rem;
+  
+}
+.appointment_form{
+  margin-left: 3rem;
+}
+.contact_form .form-section{
+  padding: 1rem;
+}
+
+ 
+.form-section label{
+  text-align: left;
+  font-size: 18px;
+  color: bisque;
+}
+
+
+
+.form-section input {
+  position: absolute;
+  width: 70%;
+  height:2rem;
+  right: 2rem;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  background: rgba(255, 253, 253, 0.753);
+}
+.form-section textarea,
+.form-section input[placeholder] {
+  font-size: 14px;
+  padding-left: 1rem;
+}
+
+.contact_form .form-checkbox{
+  text-align: center;
+  font-size: 14px;
+  display: flex;
+  padding-left: 12rem;
+  margin: 1rem;
+}
+.cb{
+  margin-left: 1rem;
+}
+ 
+.submit_button{
+  text-align: center;
+  font-size:20px; 
+  width:20%;
+
+ 
+}
+.submit_button button {
+ width: 20%;
+ position: absolute;
+ bottom: 1rem;
+ height: 3rem;
+ font-size: 15px;
+ background: rgb(14, 146, 58);
+ border-radius: 3px ;
+ left:50%;
+ transition: all .3s;
+ transform: translateX(-50%);
+ -webkit-transform: translateX(-50%);
+ -moz-transform: translateX(-50%);
+ -ms-transform: translateX(-50%);
+ -o-transform: translateX(-50%);
+ -webkit-border-radius: 3px ;
+ -moz-border-radius: 3px ;
+ -ms-border-radius: 3px ;
+ -o-border-radius: 3px ;
+ -webkit-transition: all .3s;
+ -moz-transition: all .3s;
+ -ms-transition: all .3s;
+ -o-transition: all .3s;
+ border: 1px solid;
+ box-shadow: 5px 10px 18px #888888;
+}
+.submit_button button:hover{
+  font-size: 16px;
+  background: rgb(0, 51, 145);
+  color: aliceblue;
+  box-shadow: 4px 4px 4px 4px solid rgb(27, 27, 27);
+  transition: all .3s;
+}
+/* contact form  */
+
+
+/* table */
+
+table { 
+	width: 75%; 
+	border-collapse: collapse; 
+	margin:50px auto;
+	}
+
+/* Zebra striping */
+tr:nth-of-type(odd) { 
+	background: #eee; 
+	}
+
+th { 
+	background: #29c2c2; 
+	color: white; 
+	font-weight: bold; 
+	}
+
+td, th { 
+	padding: 10px; 
+	border: 1px solid #ccc; 
+	text-align: center; 
+	font-size: 18px;
+	}
+
+/* 
+Max width before this PARTICULAR table gets nasty
+This query will take effect for any screen smaller than 760px
+and also iPads specifically.
+*/
+@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
+
+	table { 
+	  	width: 100%; 
+	}
+
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+
+	td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+		/* Label the data */
+		content: attr(data-column);
+
+		color: #000;
+		font-weight: bold;
+	}
+
+}
+
+/* table  */
+
+.dropdown-section{
+    position: absolute;
+    bottom: 7rem;
+    left: 1rem;
+    font-size: 18px;
+}
+.dropdown-section select{
+    
+    font-size: 14px;
+    width: 10rem;
+    height: 2rem;
+    text-align: center;
+    border: 1px solid;
+    background: #9ac0fad1;
+}
+ 
+.counter_header{
+  position: relative;
+  height: 6rem;
+  padding-top: 3rem;
+  padding-bottom: 6rem;
+  text-align: center;
+  font-size: 3rem;
+  font-family: 'Oswald', sans-serif;
+  color: #5F6368;
+  font-weight: 700;
+  font-style: italic;
+}
+ 
+
+footer {
+  text-align: center;
+  padding: 15px;
+  background: rgb(0,0,0);
+  background: linear-gradient(90deg, rgba(0,0,0,1) 9%, rgba(77,179,144,1) 38%, rgba(88,164,135,1) 69%, rgba(4,27,32,1) 95%); 
+  color: #000;
+}
+
+/* time select*/
+
+input[type="number"] {
+  width: 100px;
+}
+
+input + span {
+  padding-right: 30px;
+}
+
+input:invalid+span:after {
+  position: absolute;
+  content: '✖';
+  padding-left: 5px;
+}
+
+input:valid+span:after {
+  position: absolute;
+  content: '✓';
+  padding-left: 5px;
+}
+
+/* time select*/
+
